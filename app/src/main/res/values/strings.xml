@@ -2,4 +2,11 @@
     <string name="app_name">mvvm_tests</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="thumbnail">Thumbnail</string>
+    <string name="description">Description</string>
+    <string name="title">Title</string>
+    <string name="network_videos">Network Videos</string>
+    <string name="database_videos">Database Videos</string>
+    <string name="network_videos_1">Network Videos</string>
+    <string name="transfer_data_to_database">Transfer Data to Database</string>
 </resources>

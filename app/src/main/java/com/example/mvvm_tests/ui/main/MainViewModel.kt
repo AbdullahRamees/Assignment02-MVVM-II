@@ -1,25 +1,30 @@
 package com.example.mvvm_tests.ui.main
 
+
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.example.mvvm_tests.ui.main.models.DevByteVideo
-import androidx.lifecycle.viewModelScope
-import com.example.mvvm_tests.ui.main.models.NetworkVideoContainer
+import com.example.mvvm_tests.ui.main.models.DatabaseVideo
+import com.example.mvvm_tests.ui.main.models.DatabaseVideoContainer
 import com.example.mvvm_tests.ui.main.models.asDomainModel
 import kotlinx.coroutines.launch
 import java.io.IOException
 
+
+
 class MainViewModel : ViewModel() {
-    private var _score = MutableLiveData<String>().apply {
-        value = "0"
-    }
-    var score : LiveData<String> = _score
+
+
+    private var videoDao:VideoDao? = null
 
     private val _playlist = MutableLiveData<List<DevByteVideo>>()
     val playlist: LiveData<List<DevByteVideo>>
         get() = _playlist
+
+    private val _databasePlaylist = MutableLiveData<List<DatabaseVideo>?>()
+    val databasePlaylist: LiveData<List<DatabaseVideo>?>
+        get() = _databasePlaylist
+
 
     private var _eventNetworkError = MutableLiveData<Boolean>(false)
     val eventNetworkError: LiveData<Boolean>
@@ -31,7 +36,23 @@ class MainViewModel : ViewModel() {
 
     init {
         refreshDataFromNetwork()
+        refreshDataFromDatabase()
     }
+
+    private fun refreshDataFromDatabase() = viewModelScope.launch {
+
+        Log.e("Database","Try")
+        val  databasePlaylistLocal =videoDao?.getVideos()
+        Log.e("Database",databasePlaylistLocal?.size.toString())
+        _databasePlaylist.postValue(databasePlaylistLocal)
+    }
+
+    fun addtoDataBase(Videos:List<DevByteVideo>) = viewModelScope.launch {
+        videoDao!!.insertAll(DatabaseVideoContainer(Videos).asDomainModel())
+        refreshDataFromDatabase()
+    }
+
+
 
     private fun refreshDataFromNetwork() = viewModelScope.launch {
         try {
@@ -44,9 +65,10 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun increase(){
-        var v = _score.value?.toInt()
-        _score.value = "${v?.plus(1)}"
-        Log.d("MainViewModel ","${_score.value}")
+    fun SetDao(videoDao: VideoDao?){
+        this.videoDao = videoDao
     }
+
 }
+
+

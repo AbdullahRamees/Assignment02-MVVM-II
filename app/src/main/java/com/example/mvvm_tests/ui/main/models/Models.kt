@@ -27,7 +27,7 @@ data class NetworkVideo(
     val closedCaptions: String?
 )
 
-@Entity
+@Entity(tableName = "video_table")
 data class DatabaseVideo constructor(
     @PrimaryKey
     val url: String,
@@ -44,3 +44,18 @@ data class DevByteVideo(
     val updated: String,
     val thumbnail: String
 )
+
+@JsonClass(generateAdapter = true)
+data class DatabaseVideoContainer(val videos: List<DevByteVideo>)
+
+fun DatabaseVideoContainer.asDomainModel(): List<DatabaseVideo> {
+    return videos.map {
+        DatabaseVideo(
+            title = it.title,
+            description = it.description,
+            url = it.url,
+            updated = it.updated,
+            thumbnail = it.thumbnail
+        )
+    }
+}

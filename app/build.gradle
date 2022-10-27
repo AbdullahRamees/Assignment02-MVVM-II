@@ -13,6 +13,11 @@ android {
         enabled = true
     }
 
+    buildFeatures {
+        viewBinding true
+    }
+
+
     defaultConfig {
         applicationId "com.example.mvvm_tests"
         minSdk 21
